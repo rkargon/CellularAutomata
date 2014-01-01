@@ -24,6 +24,7 @@ public class InfiniteArray implements CAUniverse {
 	
 	public InfiniteArray(CellularAutomaton alg)
 	{
+		this();
 		algorithm = alg;
 	}
 	
@@ -37,7 +38,7 @@ public class InfiniteArray implements CAUniverse {
 	@Override
 	public void setPoint(int x, int y, int state) {
 		while(x<xoffset || x>=grid.length+xoffset || y<yoffset || y>=grid[0].length+yoffset) expand();
-		grid[x-xoffset][y-yoffset] = state;
+		grid[x-xoffset][y-yoffset] = state%algorithm.getNumStates();
 		
 		//updates bounding rectangle
 		if(x-xoffset<xmin) xmin=x-xoffset;
@@ -79,6 +80,7 @@ public class InfiniteArray implements CAUniverse {
 		for(int i=xmin-1; i<=xmax+1; i++){
 			for(int j=ymin-1; j<=ymax+1; j++){
 				//update grid cell
+				//TODO use arbitrary neighborhood size
 				newgrid[i][j]=algorithm.evalCell(new int[][]{ {grid[i-1][j-1], grid[i-1][j], grid[i-1][j+1]}, {grid[i][j-1], grid[i][j], grid[i][j+1]}, {grid[i+1][j-1], grid[i+1][j], grid[i+1][j+1]}});
 			}
 		}
@@ -126,13 +128,13 @@ public class InfiniteArray implements CAUniverse {
 
 	public void expand()
 	{
-		
 		int width = grid.length, height = grid[0].length; //the dimensions of the original grid
 		int[][] newgrid = new int[width*2][height*2];
 		
 		System.out.println("expanding, "+width*2+", "+height*2);
 		
 		//copy grid
+		//TODO use array copy instead of manual copying 
 		for(int i=0; i<width; i++)
 		{
 			for(int j=0; j<height; j++){
@@ -187,6 +189,11 @@ public class InfiniteArray implements CAUniverse {
 	@Override
 	public Color getColorPoint(int x, int y) {
 		return algorithm.getColor(getPoint(x, y));
+	}
+
+	@Override
+	public int getStates() {
+		return algorithm.getNumStates();
 	}
 	
 	

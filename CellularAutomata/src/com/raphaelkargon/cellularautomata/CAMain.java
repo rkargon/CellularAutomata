@@ -16,7 +16,7 @@ public class CAMain {
 		
 		CAPanel z = new CAPanel(-100.0, 100.0, 1.0, 2.0);
 		pane.add(z);
-		z.setBackground(Color.WHITE);
+		//z.setBackground(Color.BLACK);
 		
 		//set up keyboard focus
 		z.setFocusable(true);

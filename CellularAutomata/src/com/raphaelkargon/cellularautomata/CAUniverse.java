@@ -39,5 +39,7 @@ public interface CAUniverse {
 	public void setAlgorithm(CellularAutomaton alg);
 	
 	public String toString();
+
+	public int getStates();
 	
 }

@@ -57,13 +57,15 @@ public class CAPanel extends ZoomablePanel {
 		zoomcursor = toolkit.createCustomCursor(zoomimage, new Point(5, 5),  "zoomcursor");
 		
 		
-		ca = new InfiniteArray();
+		ca = new InfiniteArray(new WireWorld());
+		this.setBackground(ca.getColorPoint(0, 0)); //set background
 		
-		for(int i=0; i<ca.getWidth(); i++){
-			for(int j=0; j<ca.getHeight(); j++){
-				ca.setPoint(i, j, (int)(Math.random()*2));
+		for(int i=0; i<200; i++){
+			for(int j=0; j<200; j++){
+				ca.setPoint(i, j, (int)(Math.random()*ca.getStates()));
 			}
 		}
+		
 	}
 
 	protected void addListeners(){
@@ -98,7 +100,7 @@ public class CAPanel extends ZoomablePanel {
 		int[][] grid = ca.getGrid();
 		for(int i=0; i<ca.getWidth(); i++){
 			for(int j=0; j<ca.getHeight(); j++){
-				if(grid[i][j]==1) this.addShape(new Rectangle(i+ca.getXOffset(),  j+ca.getYOffset(), 1, 1), ca.getColorPoint(i+ca.getXOffset(),  j+ca.getYOffset()), true);
+				if(grid[i][j]!=0) this.addShape(new Rectangle(i+ca.getXOffset(),  j+ca.getYOffset(), 1, 1), ca.getColorPoint(i+ca.getXOffset(),  j+ca.getYOffset()), true);
 			}
 		}
 		repaint();
