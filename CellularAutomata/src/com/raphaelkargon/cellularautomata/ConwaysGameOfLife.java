@@ -15,8 +15,8 @@ public class ConwaysGameOfLife implements CellularAutomaton {
 
 	@Override
 	public Color getColor(int state) {
-		if(state==1) return Color.WHITE;
-		else return Color.BLACK;
+		if(state==1) return Color.BLACK;
+		else return Color.WHITE;
 	}
 
 	@Override
