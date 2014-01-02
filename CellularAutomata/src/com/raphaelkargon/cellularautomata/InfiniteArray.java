@@ -4,28 +4,30 @@ import java.awt.Color;
 
 public class InfiniteArray implements CAUniverse {
 
-	private final int DEFAULT_GRID_WIDTH=100, DEFAULT_GRID_HEIGHT=100;
+	private static final int DEFAULT_GRID_WIDTH=100, DEFAULT_GRID_HEIGHT=100;
 	
 	private int[][] grid;
 	private int xoffset=0, yoffset=0; // the x,y position of grid[0][0]
 	private int xmin, xmax, ymin, ymax; //in array coordinates, represent bounding box of existing living cells
 	
-	private CellularAutomaton algorithm;
+	private CellularAutomaton alg;
 	
 	public InfiniteArray() {
-		grid = new int[DEFAULT_GRID_WIDTH][DEFAULT_GRID_HEIGHT];
-		algorithm = new ConwaysGameOfLife();
+		this(DEFAULT_GRID_WIDTH, DEFAULT_GRID_HEIGHT, new ConwaysGameOfLife());
 	}
 
 	public InfiniteArray(int width, int height){
-		grid = new int[width][height];
-		algorithm = new ConwaysGameOfLife();
+		this(width, height,new ConwaysGameOfLife());
 	}
 	
 	public InfiniteArray(CellularAutomaton alg)
 	{
-		this();
-		algorithm = alg;
+		this(DEFAULT_GRID_WIDTH, DEFAULT_GRID_HEIGHT, alg);
+	}
+	
+	public InfiniteArray(int width, int height, CellularAutomaton alg){
+		grid = new int[width][height];
+		this.alg = alg;	
 	}
 	
 	@Override
@@ -38,7 +40,7 @@ public class InfiniteArray implements CAUniverse {
 	@Override
 	public void setPoint(int x, int y, int state) {
 		while(x<xoffset || x>=grid.length+xoffset || y<yoffset || y>=grid[0].length+yoffset) expand();
-		grid[x-xoffset][y-yoffset] = state%algorithm.getNumStates();
+		grid[x-xoffset][y-yoffset] = state%alg.getNumStates();
 		
 		//updates bounding rectangle
 		if(x-xoffset<xmin) xmin=x-xoffset;
@@ -81,7 +83,7 @@ public class InfiniteArray implements CAUniverse {
 			for(int j=ymin-1; j<=ymax+1; j++){
 				//update grid cell
 				//TODO use arbitrary neighborhood size
-				newgrid[i][j]=algorithm.evalCell(new int[][]{ {grid[i-1][j-1], grid[i-1][j], grid[i-1][j+1]}, {grid[i][j-1], grid[i][j], grid[i][j+1]}, {grid[i+1][j-1], grid[i+1][j], grid[i+1][j+1]}});
+				newgrid[i][j]=alg.evalCell(new int[][]{ {grid[i-1][j-1], grid[i-1][j], grid[i-1][j+1]}, {grid[i][j-1], grid[i][j], grid[i][j+1]}, {grid[i+1][j-1], grid[i+1][j], grid[i+1][j+1]}});
 			}
 		}
 		
@@ -183,17 +185,17 @@ public class InfiniteArray implements CAUniverse {
 			}
 		}
 		
-		this.algorithm = alg;
+		this.alg = alg;
 	}
 
 	@Override
 	public Color getColorPoint(int x, int y) {
-		return algorithm.getColor(getPoint(x, y));
+		return alg.getColor(getPoint(x, y));
 	}
 
 	@Override
 	public int getStates() {
-		return algorithm.getNumStates();
+		return alg.getNumStates();
 	}
 	
 	

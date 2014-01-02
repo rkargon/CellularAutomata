@@ -17,7 +17,7 @@ public class CyclicCA implements CellularAutomaton {
 		this.neighborhood_size=neighbors;
 		
 		cols=new Color[nstates];
-		for(int i=0; i<cols.length; i++) cols[i] = new Color((int)(255 * (double)i/nstates), (int)(255 * (double)i/nstates), (int)(255 * (double)i/nstates));
+		for(int i=0; i<cols.length; i++) cols[i] = new Color((int)(255 * (double)i/(nstates-1)), (int)(255 * (double)i/(nstates-1)), (int)(255 * (double)i/(nstates-1)));
 	}
 	
 	@Override

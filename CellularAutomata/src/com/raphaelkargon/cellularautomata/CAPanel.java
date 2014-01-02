@@ -57,11 +57,12 @@ public class CAPanel extends ZoomablePanel {
 		zoomcursor = toolkit.createCustomCursor(zoomimage, new Point(5, 5),  "zoomcursor");
 		
 		
-		ca = new InfiniteArray(new WireWorld());
+		ca = new BoundedBox(new CyclicCA(16, 1));
 		this.setBackground(ca.getColorPoint(0, 0)); //set background
+		System.out.println(ca.getPoint(0, 0));
 		
-		for(int i=0; i<200; i++){
-			for(int j=0; j<200; j++){
+		for(int i=0; i<ca.getWidth(); i++){
+			for(int j=0; j<ca.getHeight(); j++){
 				ca.setPoint(i, j, (int)(Math.random()*ca.getStates()));
 			}
 		}
