@@ -4,7 +4,7 @@ import java.awt.Color;
 
 public class InfiniteArray implements CAUniverse {
 
-	private static final int DEFAULT_GRID_WIDTH=100, DEFAULT_GRID_HEIGHT=100;
+	private static final int DEFAULT_GRID_WIDTH=200, DEFAULT_GRID_HEIGHT=200;
 	
 	private int[][] grid;
 	private int xoffset=0, yoffset=0; // the x,y position of grid[0][0]
@@ -126,6 +126,8 @@ public class InfiniteArray implements CAUniverse {
 		
 		//update grid
 		grid=newgrid;
+		
+		alg.incGeneration(1);
 	}
 
 	public void expand()

@@ -4,7 +4,7 @@ import java.awt.Color;
 
 public class CyclicCA implements CellularAutomaton {
 
-	private int nstates, neighborhood_size;
+	private int nstates, neighborhood_size, gen=0;
 	Color[] cols;
 	
 	public CyclicCA(){
@@ -27,7 +27,7 @@ public class CyclicCA implements CellularAutomaton {
 
 	@Override
 	public Color getColor(int state) {
-		return cols[state%cols.length];
+		return cols[state];
 	}
 
 	@Override
@@ -49,5 +49,14 @@ public class CyclicCA implements CellularAutomaton {
 		//works with any size, really
 		return neighborhood_size;
 	}
+	@Override
+	public void incGeneration(int i) {
+		gen += i;
 
+	}
+
+	@Override
+	public int getGenerationNumber() {
+		return gen;
+	}
 }

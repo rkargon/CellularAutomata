@@ -24,9 +24,9 @@ public class BornSurviveCA implements CellularAutomaton {
 	 * small end) represents what happens when a cell is surrounded by n "on"
 	 * neighbors
 	 */
-	private int born, survive;
+	private int born, survive, gen = 0;
 
-	//by default, create Conway's Game of Life
+	// by default, create Conway's Game of Life
 	public BornSurviveCA() {
 		this(1 << 3, (1 << 2) | (1 << 3));
 	}
@@ -70,6 +70,17 @@ public class BornSurviveCA implements CellularAutomaton {
 	@Override
 	public int getNeighborSize() {
 		return 1;
+	}
+
+	@Override
+	public void incGeneration(int i) {
+		gen += i;
+
+	}
+
+	@Override
+	public int getGenerationNumber() {
+		return gen;
 	}
 
 }

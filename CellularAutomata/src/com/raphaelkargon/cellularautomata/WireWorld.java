@@ -5,10 +5,12 @@ import java.awt.Color;
 public class WireWorld implements CellularAutomaton {
 
 	public Color[] cols;
+	private int gen = 0;
 
 	public WireWorld() {
 		super();
-		cols = new Color[] { Color.BLACK, new Color(15, 35, 255), Color.WHITE, new Color(249, 147, 0)};
+		cols = new Color[] { Color.BLACK, new Color(15, 35, 255), Color.WHITE,
+				new Color(249, 147, 0) };
 	}
 
 	@Override
@@ -18,7 +20,6 @@ public class WireWorld implements CellularAutomaton {
 
 	@Override
 	public Color getColor(int state) {
-		state %= 4;
 		return cols[state];
 	}
 
@@ -31,18 +32,19 @@ public class WireWorld implements CellularAutomaton {
 			return 2;
 		if (mid == 2)
 			return 3;
-		if(mid==3){
-			//TODO
-			int heads=0;
-			for(int i=0; i<3; i++){
-				for(int j=0; j<3; j++){
-					if(neighborhood[i][j]==1){
+		if (mid == 3) {
+			int heads = 0;
+			for (int i = 0; i < 3; i++) {
+				for (int j = 0; j < 3; j++) {
+					if (neighborhood[i][j] == 1) {
 						heads++;
-						if(heads>2) return 3;
+						if (heads > 2)
+							return 3;
 					}
 				}
 			}
-			if(heads==1 || heads==2) return 1;
+			if (heads == 1 || heads == 2)
+				return 1;
 			return 3;
 		}
 		return 0;
@@ -53,4 +55,14 @@ public class WireWorld implements CellularAutomaton {
 		return 1;
 	}
 
+	@Override
+	public void incGeneration(int i) {
+		gen += i;
+
+	}
+
+	@Override
+	public int getGenerationNumber() {
+		return gen;
+	}
 }

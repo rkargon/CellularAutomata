@@ -2,7 +2,7 @@ package com.raphaelkargon.cellularautomata;
 
 import java.awt.Color;
 
-public class BoundedBox implements CAUniverse {
+public class Torus implements CAUniverse {
 
 	private final static int DEFAULT_GRID_WIDTH = 200;
 	private final static int DEFAULT_GRID_HEIGHT = 200;
@@ -10,19 +10,19 @@ public class BoundedBox implements CAUniverse {
 
 	private CellularAutomaton alg;
 
-	public BoundedBox() {
+	public Torus() {
 		this(DEFAULT_GRID_WIDTH, DEFAULT_GRID_HEIGHT, new ConwaysGameOfLife());
 	}
 
-	public BoundedBox(int width, int height) {
+	public Torus(int width, int height) {
 		this(width, height, new ConwaysGameOfLife());
 	}
 
-	public BoundedBox(CellularAutomaton alg) {
+	public Torus(CellularAutomaton alg) {
 		this(DEFAULT_GRID_WIDTH, DEFAULT_GRID_HEIGHT, alg);
 	}
 
-	public BoundedBox(int width, int height, CellularAutomaton alg) {
+	public Torus(int width, int height, CellularAutomaton alg) {
 		grid = new int[width][height];
 		this.alg = alg;
 	}
@@ -57,12 +57,26 @@ public class BoundedBox implements CAUniverse {
 		return 0;
 	}
 
+	/**
+	 * Torus grid: when point reaches the boundary, it goes to the opposite
+	 * side. grid[-1][-1] is grid[xmax][ymax]
+	 * 
+	 * (non-Javadoc)
+	 * 
+	 * @see com.raphaelkargon.cellularautomata.CAUniverse#getPoint(int, int)
+	 */
 	@Override
 	public int getPoint(int x, int y) {
-		if (x < 0 || x >= grid.length || y < 0 || y >= grid[0].length)
-			return 0;
-		else
-			return grid[x][y];
+		if (x < 0)
+			x = (grid.length + (x % grid.length)) % grid.length;
+		else if (x >= grid.length)
+			x %= grid.length;
+		if (y < 0)
+			y = (grid[0].length + (y % grid[0].length)) % grid[0].length;
+		else if (y >= grid[0].length)
+			y %= grid[0].length;
+
+		return grid[x][y];
 	}
 
 	@Override
@@ -72,17 +86,25 @@ public class BoundedBox implements CAUniverse {
 
 	@Override
 	public void setPoint(int x, int y, int state) {
-		if (x >= 0 && x < grid.length && y >= 0 && y < grid[0].length)
-			grid[x][y] = state%alg.getNumStates();
+		if (x < 0)
+			x = (grid.length + (x % grid.length)) % grid.length;
+		else if (x >= grid.length)
+			x %= grid.length;
+		if (y < 0)
+			y = (grid[0].length + (y % grid[0].length)) % grid[0].length;
+		else if (y >= grid[0].length)
+			y %= grid[0].length;
 
+		grid[x][y] = state%alg.getNumStates();
 	}
 
 	@Override
 	public void nextGeneration() {
+		// TODO Auto-generated method stub
 		int[][] newgrid = new int[grid.length][grid[0].length];
 		int[][] neighborhood = new int[alg.getNeighborSize() * 2 + 1][alg
 				.getNeighborSize() * 2 + 1];
-		int i, j, di, dj, neighborsize = alg.getNeighborSize();
+		int i, j, di, dj, tmpi, tmpj, neighborsize = alg.getNeighborSize();
 
 		for (i = 0; i < grid.length; i++) {
 			for (j = 0; j < grid[0].length; j++) {
@@ -94,7 +116,9 @@ public class BoundedBox implements CAUniverse {
 							neighborhood[di + neighborsize][dj + neighborsize] = grid[i
 									+ di][j + dj];
 						} catch (ArrayIndexOutOfBoundsException e) {
-							neighborhood[di + neighborsize][dj + neighborsize] = 0;
+							tmpi = (grid.length + ((i+di) % grid.length)) % grid.length;
+							tmpj = (grid[0].length + ((j+dj) % grid[0].length)) % grid[0].length;
+							neighborhood[di + neighborsize][dj + neighborsize] = grid[(tmpi)][(tmpj)];
 						}
 					}
 
@@ -102,15 +126,15 @@ public class BoundedBox implements CAUniverse {
 				}
 			}
 		}
-		
-		grid=newgrid;
+
+		grid = newgrid;
+
 		alg.incGeneration(1);
 	}
 
 	@Override
 	public void setAlgorithm(CellularAutomaton alg) {
 		this.alg = alg;
-
 	}
 
 	@Override

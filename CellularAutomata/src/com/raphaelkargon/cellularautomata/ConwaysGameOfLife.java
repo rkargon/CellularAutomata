@@ -4,6 +4,8 @@ import java.awt.Color;
 
 public class ConwaysGameOfLife implements CellularAutomaton {
 
+	private int gen=0;
+	
 	public ConwaysGameOfLife() {
 		super();
 	}
@@ -38,5 +40,14 @@ public class ConwaysGameOfLife implements CellularAutomaton {
 	public int getNeighborSize() {
 		return 1;
 	}
+	@Override
+	public void incGeneration(int i) {
+		gen += i;
 
+	}
+
+	@Override
+	public int getGenerationNumber() {
+		return gen;
+	}
 }
