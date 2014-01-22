@@ -4,8 +4,8 @@ import java.awt.Color;
 
 public class Torus implements CAUniverse {
 
-	private final static int DEFAULT_GRID_WIDTH = 200;
-	private final static int DEFAULT_GRID_HEIGHT = 200;
+	private final static int DEFAULT_GRID_WIDTH = 300;
+	private final static int DEFAULT_GRID_HEIGHT = 300;
 	private int[][] grid;
 
 	private CellularAutomaton alg;

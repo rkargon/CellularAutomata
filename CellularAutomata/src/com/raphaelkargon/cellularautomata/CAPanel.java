@@ -1,6 +1,7 @@
 package com.raphaelkargon.cellularautomata;
 
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -17,6 +18,7 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 
+import javax.swing.JFrame;
 import javax.swing.Timer;
 
 import com.raphaelkargon.ZoomablePanel;
@@ -38,8 +40,9 @@ public class CAPanel extends ZoomablePanel {
 
 	private CAUniverse ca;
 
-	private int brushstate=1; // current state the the brush paints on the grid
-	private int tmpbrushstate=brushstate;
+	private int brushstate = 1; // current state the the brush paints on the
+								// grid
+	private int tmpbrushstate = brushstate;
 	private int previous_x, previous_y; // for interpolating between brush
 										// strokes
 
@@ -71,12 +74,11 @@ public class CAPanel extends ZoomablePanel {
 		zoomcursor = toolkit.createCustomCursor(zoomimage, new Point(5, 5),
 				"zoomcursor");
 
-
-		ca = new BoundedBox(new CheckerBoard());
+		ca = new Torus(496, 496, new ThreeStateBLM());
 		this.setBackground(ca.getColorPoint(0, 0)); // set background
 		for (int i = 0; i < ca.getWidth(); i++) {
 			for (int j = 0; j < ca.getHeight(); j++) {
-				ca.setPoint(i, j, (int)(Math.random()*ca.getStates()));
+				ca.setPoint(i, j, (Math.random()>0.5) ? (int) (Math.random() * ca.getStates()) : 0);
 			}
 		}
 
@@ -164,7 +166,7 @@ public class CAPanel extends ZoomablePanel {
 						e.getX(), e.getY()));
 				int x = (int) (Math.floor(p.x)),
 				y = (int) (Math.floor(p.y));
-				tmpbrushstate=brushstate;
+				tmpbrushstate = brushstate;
 				ca.setPoint(x, y, (ca.getPoint(x, y) != 0) ? 0 : brushstate);
 				paintCA();
 				break;
@@ -181,7 +183,7 @@ public class CAPanel extends ZoomablePanel {
 						e.getX(), e.getY()));
 				int x = (int) (Math.floor(p.x)),
 				y = (int) (Math.floor(p.y));
-				tmpbrushstate=brushstate;
+				tmpbrushstate = brushstate;
 				brushstate = (ca.getPoint(x, y) != 0) ? 0 : brushstate;
 				previous_x = x;
 				previous_y = y;
@@ -190,7 +192,8 @@ public class CAPanel extends ZoomablePanel {
 		}
 
 		public void mouseReleased(MouseEvent e) {
-			if(mode==1)  brushstate = tmpbrushstate;
+			if (mode == 1)
+				brushstate = tmpbrushstate;
 		}
 	}
 
@@ -243,10 +246,30 @@ public class CAPanel extends ZoomablePanel {
 					prevmode = mode;
 					mode = 0;
 				}
-			}
-			else if (e.getKeyChar() >= e.VK_0 && e.getKeyChar() <= e.VK_9){
-				brushstate = (e.getKeyChar()-30) % ca.getStates();
+			} else if (e.getKeyCode() >= KeyEvent.VK_0
+					&& e.getKeyCode() <= KeyEvent.VK_9) {
+				brushstate = (e.getKeyCode() - 48) % ca.getStates();
 			}
 		}
+	}
+	
+	public static void main(String[] args) {
+		JFrame win = new JFrame("Cellular Automata");
+		win.setSize(600, 600);
+		win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		Container pane = win.getContentPane();
+		
+		CAPanel z = new CAPanel(-100.0, 100.0, 1.0, 2.0);
+		pane.add(z);
+		//z.setBackground(Color.BLACK);
+		
+		//set up keyboard focus
+		z.setFocusable(true);
+		z.requestFocusInWindow();
+		
+		z.paintCA();
+		
+		win.setVisible(true);
+		
 	}
 }
