@@ -38,6 +38,8 @@ public class BriansBrain implements CellularAutomaton {
 		if (mid == 2)
 			return 0; // dying cells go to "off"
 		if (mid == 0) {
+			
+			//TODO replace this with simple sum
 			for (i = 0; i < 3; i++) {
 				for (j = 0; j < 3; j++) {
 					if (neighborhood[i][j] == 1) {

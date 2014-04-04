@@ -109,8 +109,7 @@ public class Torus implements CAUniverse {
 		for (i = 0; i < grid.length; i++) {
 			for (j = 0; j < grid[0].length; j++) {
 				for (di = -neighborsize; di <= neighborsize; di++) {
-					// copy neighborhood onto array, while using '0' for values
-					// outside boundary
+					// copy neighborhood onto array
 					for (dj = -neighborsize; dj <= neighborsize; dj++) {
 						try {
 							neighborhood[di + neighborsize][dj + neighborsize] = grid[i

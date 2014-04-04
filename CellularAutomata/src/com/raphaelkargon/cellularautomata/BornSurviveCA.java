@@ -26,6 +26,8 @@ public class BornSurviveCA implements CellularAutomaton {
 	 */
 	private int born, survive, gen = 0;
 
+	private int[] LUT;
+	
 	// by default, create Conway's Game of Life
 	public BornSurviveCA() {
 		this(1 << 3, (1 << 2) | (1 << 3));
@@ -41,6 +43,11 @@ public class BornSurviveCA implements CellularAutomaton {
 			this.born |= (1 << born[i]);
 		for (int i = 0; i < survive.length; i++)
 			this.survive |= (1 << survive[i]);
+		
+		LUT = new int[512];
+		for(int i=0; i<512; i++){
+			;
+		}
 	}
 
 	@Override
