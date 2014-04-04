@@ -27,7 +27,7 @@ public class BornSurviveCA implements CellularAutomaton {
 	private int born, survive, gen = 0;
 
 	private int[] LUT;
-	
+
 	// by default, create Conway's Game of Life
 	public BornSurviveCA() {
 		this(1 << 3, (1 << 2) | (1 << 3));
@@ -36,6 +36,7 @@ public class BornSurviveCA implements CellularAutomaton {
 	public BornSurviveCA(int born, int survive) {
 		this.born = born;
 		this.survive = survive;
+		genLUT();
 	}
 
 	public BornSurviveCA(int[] born, int[] survive) {
@@ -43,13 +44,20 @@ public class BornSurviveCA implements CellularAutomaton {
 			this.born |= (1 << born[i]);
 		for (int i = 0; i < survive.length; i++)
 			this.survive |= (1 << survive[i]);
-		
-		LUT = new int[512];
-		for(int i=0; i<512; i++){
-			;
-		}
+		genLUT();
 	}
 
+	protected void genLUT(){
+		LUT = new int[512];
+		for (int i = 0; i < 512; i++) {
+			int s = Integer.bitCount(i);
+			int m = (i & 16) >> 4;
+			if (m == 0 && ((this.born & 1 << s) != 0) || m == 1
+					&& ((this.survive & 1 << (s - 1)) != 0))
+			LUT[i]=1;
+		}
+	}
+	
 	@Override
 	public int getNumStates() {
 		return 2;
@@ -61,17 +69,10 @@ public class BornSurviveCA implements CellularAutomaton {
 	}
 
 	@Override
-	public int evalCell(int[][] neighborhood) {
-		int sum = neighborhood[0][0] + neighborhood[0][1] + neighborhood[0][2]
-				+ neighborhood[1][0] + neighborhood[1][2] + neighborhood[2][0]
-				+ neighborhood[2][1] + neighborhood[2][2];
-		int mid = neighborhood[1][1];
-
-		if ((mid == 1 && (survive & (1 << sum)) != 0)
-				|| (mid == 0 && (born & (1 << sum)) != 0))
-			return 1;
-
-		return 0;
+	public int evalCell(int[][] n) {
+		return LUT[n[0][0] | (n[0][1] << 1) | (n[0][2] << 2) | (n[1][0] << 3)
+					| (n[1][1] << 4) | (n[1][2] << 5) | (n[2][0] << 6)
+					| (n[2][1] << 7) | (n[2][2] << 8)];
 	}
 
 	@Override

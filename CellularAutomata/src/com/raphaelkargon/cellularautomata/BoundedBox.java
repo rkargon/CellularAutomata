@@ -6,7 +6,7 @@ public class BoundedBox implements CAUniverse {
 
 	private final static int DEFAULT_GRID_WIDTH = 200;
 	private final static int DEFAULT_GRID_HEIGHT = 200;
-	private int[][] grid;
+	private int[][] grid, buffer;
 
 	private CellularAutomaton alg;
 
@@ -24,6 +24,7 @@ public class BoundedBox implements CAUniverse {
 
 	public BoundedBox(int width, int height, CellularAutomaton alg) {
 		grid = new int[width][height];
+		buffer = new int[width][height];
 		this.alg = alg;
 	}
 
@@ -79,31 +80,31 @@ public class BoundedBox implements CAUniverse {
 
 	@Override
 	public void nextGeneration() {
-		int[][] newgrid = new int[grid.length][grid[0].length];
-		int[][] neighborhood = new int[alg.getNeighborSize() * 2 + 1][alg
-				.getNeighborSize() * 2 + 1];
-		int i, j, di, dj, neighborsize = alg.getNeighborSize();
+		int i, j, di, dj, n = alg.getNeighborSize();
+		int[][] neighborhood = new int[n * 2 + 1][n * 2 + 1];
 
 		for (i = 0; i < grid.length; i++) {
 			for (j = 0; j < grid[0].length; j++) {
-				for (di = -neighborsize; di <= neighborsize; di++) {
+				for (di = -n; di <= n; di++) {
 					// copy neighborhood onto array, while using '0' for values
 					// outside boundary
-					for (dj = -neighborsize; dj <= neighborsize; dj++) {
+					for (dj = -n; dj <= n; dj++) {
 						try {
-							neighborhood[di + neighborsize][dj + neighborsize] = grid[i
+							neighborhood[di + n][dj + n] = grid[i
 									+ di][j + dj];
 						} catch (ArrayIndexOutOfBoundsException e) {
-							neighborhood[di + neighborsize][dj + neighborsize] = 0;
+							neighborhood[di + n][dj + n] = 0;
 						}
 					}
 
-					newgrid[i][j] = alg.evalCell(neighborhood);
 				}
+				buffer[i][j] = alg.evalCell(neighborhood);
 			}
 		}
 		
-		grid=newgrid;
+		int[][] tmp = grid;
+		grid=buffer;
+		buffer = tmp;
 		alg.incGeneration(1);
 	}
 

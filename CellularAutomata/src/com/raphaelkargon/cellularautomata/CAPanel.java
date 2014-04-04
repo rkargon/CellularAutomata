@@ -54,7 +54,7 @@ public class CAPanel extends JPanel {
 
 	private Timer timer;
 	private Cursor zoomcursor;
-
+	
 	/* Cellular automaton data */
 	private CAUniverse ca;
 
@@ -74,7 +74,7 @@ public class CAPanel extends JPanel {
 
 		addListeners();
 
-		timer = new Timer(20, new ActionListener() {
+		timer = new Timer(0, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				ca.nextGeneration();
@@ -87,7 +87,7 @@ public class CAPanel extends JPanel {
 		zoomcursor = toolkit
 				.createCustomCursor(zoomimage, new Point(5, 5), "zoomcursor");
 
-		ca = new Torus(400, 400, new CyclicCA(16, 1));
+		ca = new InfiniteArray(800, 800, new ConwaysGameOfLife());
 		this.setBackground(ca.getColorPoint(0, 0)); // set background
 		for (int i = 0; i < ca.getWidth(); i++) {
 			for (int j = 0; j < ca.getHeight(); j++) {
@@ -132,12 +132,10 @@ public class CAPanel extends JPanel {
 				case 0:
 					// left click, zoom in
 					if (e.getButton() == MouseEvent.BUTTON1) {
-						System.out.println("zoom");
 						zoom(e.getPoint(), true);
 					}
 					// right click, zoom out
 					else if (e.getButton() == MouseEvent.BUTTON3) {
-						System.out.println("zoom");
 						zoom(e.getPoint(), false);
 					}
 					// middle click, center origin
@@ -220,6 +218,7 @@ public class CAPanel extends JPanel {
 				}
 				else if (e.getKeyChar() == 'a') {
 					antiAliasing = !antiAliasing;
+					repaint();
 				}
 				else if (e.getKeyChar() == 'z') {
 					if (mode == 0) {
@@ -270,8 +269,8 @@ public class CAPanel extends JPanel {
 			Point2D gc_pixels;
 			try {
 				gridcorner = getXYCoordinates(new Point2D.Double(0, 0));
-				gc_pixels = getPixelCoordinates(new Point2D.Double(Math.ceil(gridcorner
-						.getX()), Math.ceil(gridcorner.getX())));
+				gc_pixels = getPixelCoordinates(new Point2D.Double(Math.floor(gridcorner
+						.getX()), Math.floor(gridcorner.getY())));
 			}
 			catch (NoninvertibleTransformException e) {
 				e.printStackTrace();

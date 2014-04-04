@@ -4,8 +4,6 @@ import java.awt.Color;
 
 public class InfiniteArray implements CAUniverse {
 
-	//FIXME for some reason doesn't work with BLM?!
-	
 	private static final int DEFAULT_GRID_WIDTH = 200,
 			DEFAULT_GRID_HEIGHT = 200;
 
@@ -79,6 +77,9 @@ public class InfiniteArray implements CAUniverse {
 
 	@Override
 	public void nextGeneration() {
+		int n = alg.getNeighborSize(), di, dj;
+		int[][] neighborhood = new int[n][n];
+
 		//makes sure bounding box of cells  +- 1 is not on array border
 		while (xmin - 2 <= 0 || ymin - 2 <= 0 || xmax + 2 >= grid.length
 				|| ymax + 2 >= grid[0].length)
@@ -91,19 +92,30 @@ public class InfiniteArray implements CAUniverse {
 		for (int i = xmin - 1; i <= xmax + 1; i++) {
 			for (int j = ymin - 1; j <= ymax + 1; j++) {
 				//update grid cell
-				//TODO use arbitrary neighborhood size
-				buffer[i][j] = alg.evalCell(new int[][] {
-						{ grid[i - 1][j - 1], grid[i - 1][j],
-								grid[i - 1][j + 1] },
-						{ grid[i][j - 1], grid[i][j], grid[i][j + 1] },
-						{ grid[i + 1][j - 1], grid[i + 1][j],
-								grid[i + 1][j + 1] } });
+				if (n > 1) {
+					//neighbor size > 1
+					for (di = -n; di <= n; di++) {
+						// copy neighborhood onto array
+						for (dj = -n; dj <= n; dj++) {
+							neighborhood[di + n][dj + n] = grid[i + di][j + dj];
+						}
+					}
+					buffer[i][j] = alg.evalCell(neighborhood);
+				}
+				else {
+					buffer[i][j] = alg.evalCell(new int[][] {
+							{ grid[i - 1][j - 1], grid[i - 1][j],
+									grid[i - 1][j + 1] },
+							{ grid[i][j - 1], grid[i][j], grid[i][j + 1] },
+							{ grid[i + 1][j - 1], grid[i + 1][j],
+									grid[i + 1][j + 1] } });
+				}
 			}
 		}
 
 		//check top boundary for stretching
 		for (int i = xmin - 1; i <= xmax + 1; i++) {
-			if (buffer[i][ymin - 1] == 1) {
+			if (buffer[i][ymin - 1] > 0) {
 				newymin = ymin - 1;
 				break;
 			}
@@ -111,7 +123,7 @@ public class InfiniteArray implements CAUniverse {
 
 		//check bottom boundary for stretching
 		for (int i = xmin - 1; i <= xmax + 1; i++) {
-			if (buffer[i][ymax + 1] == 1) {
+			if (buffer[i][ymax + 1] > 0) {
 				newymax = ymax + 1;
 				break;
 			}
@@ -119,7 +131,7 @@ public class InfiniteArray implements CAUniverse {
 
 		//check left boundary for stretching
 		for (int j = ymin - 1; j <= ymax + 1; j++) {
-			if (buffer[xmin - 1][j] == 1) {
+			if (buffer[xmin - 1][j] > 0) {
 				newxmin = xmin - 1;
 				break;
 			}
@@ -127,7 +139,7 @@ public class InfiniteArray implements CAUniverse {
 
 		//check right boundary for stretching
 		for (int j = ymin - 1; j <= ymax + 1; j++) {
-			if (buffer[xmax + 1][j] == 1) {
+			if (buffer[xmax + 1][j] > 0) {
 				newxmax = xmax + 1;
 				break;
 			}
@@ -169,7 +181,7 @@ public class InfiniteArray implements CAUniverse {
 		ymax += width / 2;
 
 		grid = newgrid;
-		buffer=newgrid_b;
+		buffer = newgrid_b;
 	}
 
 	@Override

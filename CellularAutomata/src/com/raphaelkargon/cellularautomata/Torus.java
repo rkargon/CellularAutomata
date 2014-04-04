@@ -6,7 +6,7 @@ public class Torus implements CAUniverse {
 
 	private final static int DEFAULT_GRID_WIDTH = 300;
 	private final static int DEFAULT_GRID_HEIGHT = 300;
-	private int[][] grid;
+	private int[][] grid, buffer;
 
 	private CellularAutomaton alg;
 
@@ -24,6 +24,7 @@ public class Torus implements CAUniverse {
 
 	public Torus(int width, int height, CellularAutomaton alg) {
 		grid = new int[width][height];
+		buffer = new int[width][height];
 		this.alg = alg;
 	}
 
@@ -100,8 +101,6 @@ public class Torus implements CAUniverse {
 
 	@Override
 	public void nextGeneration() {
-		// TODO Auto-generated method stub
-		int[][] newgrid = new int[grid.length][grid[0].length];
 		int[][] neighborhood = new int[alg.getNeighborSize() * 2 + 1][alg
 				.getNeighborSize() * 2 + 1];
 		int i, j, di, dj, tmpi, tmpj, neighborsize = alg.getNeighborSize();
@@ -121,13 +120,15 @@ public class Torus implements CAUniverse {
 						}
 					}
 
-					newgrid[i][j] = alg.evalCell(neighborhood);
 				}
+				buffer[i][j] = alg.evalCell(neighborhood);
 			}
 		}
 
-		grid = newgrid;
-
+		int[][] tmp = grid;
+		grid=buffer;
+		buffer = tmp;
+		
 		alg.incGeneration(1);
 	}
 

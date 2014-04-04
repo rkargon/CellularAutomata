@@ -35,12 +35,12 @@ public class BLMTrafficModel implements CellularAutomaton {
 	@Override
 	public int evalCell(int[][] neighborhood) {
 		int mid = neighborhood[1][1];
-		if(gen%2==0){
+		if((gen&1)==0){
 			if(mid==0 && neighborhood[0][1]==1) return 1;
 			if(mid==1 && neighborhood[2][1]==0) return 0;
 			if(mid==2) return 2;
 		}
-		else if(gen%2==1){
+		else{
 			if(mid==0 && neighborhood[1][2]==2) return 2;
 			if(mid==1) return 1;
 			if(mid==2 && neighborhood[1][0]==0) return 0;
